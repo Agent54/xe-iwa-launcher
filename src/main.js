@@ -16,3 +16,9 @@ window.addEventListener("DOMContentLoaded", () => {
     greet();
   });
 });
+
+import { checkForAppUpdates } from "./updater";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await checkForAppUpdates();
+});

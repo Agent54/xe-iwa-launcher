@@ -6,22 +6,29 @@ fn greet(name: &str) -> String {
 
 use tauri::{
     menu::{Menu, MenuItem},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     Manager,
-    tray::{TrayIconBuilder, MouseButton, MouseButtonState, TrayIconEvent},
 };
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            None,
+        ))
         .setup(|app| {
             #[cfg(desktop)]
             {
                 let autostart = app.autolaunch();
                 let _ = autostart.enable();
                 if let Ok(is_enabled) = autostart.is_enabled() {
-                    println!("Autostart is {}", if is_enabled { "enabled" } else { "disabled" });
+                    println!(
+                        "Autostart is {}",
+                        if is_enabled { "enabled" } else { "disabled" }
+                    );
                 }
             }
 
@@ -54,9 +61,10 @@ pub fn run() {
                 .build(app)?;
             Ok(())
         })
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
