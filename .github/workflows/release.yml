@@ -77,7 +77,6 @@ jobs:
 
       - name: upload assets
         uses: crabnebula-dev/cloud-release@v0
-        working-directory: ./iwa-launcher
         with:
           command: release upload ${{ env.CN_APPLICATION }} --framework tauri
           api-key: ${{ secrets.CN_API_KEY }}
