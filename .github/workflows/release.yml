@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CN_APPLICATION: "ua-community/iwa-launcher"
+  CN_APPLICATION: "ua/iwa-launcher"
 
 jobs:
   draft:
