@@ -46,6 +46,7 @@ jobs:
         with:
           toolchain: stable
           cache: true
+          path: ./iwa-launcher/src-tauri
 
       - name: install Linux dependencies
         if: matrix.os == 'ubuntu-22.04'
