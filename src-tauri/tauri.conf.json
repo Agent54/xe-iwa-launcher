@@ -30,21 +30,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "createUpdaterArtifacts": true,
-    "macOS": {
-      "signing": {
-        "identity": "Developer ID Application: YOUR NAME (TEAM_ID)",
-        "hardened-runtime": true,
-        "entitlements": null,
-        "entitlements-inherit": null,
-        "provisioningProfile": null
-      },
-      "notarize": {
-        "apple-id": "$APPLE_ID",
-        "password": "$APPLE_PASSWORD",
-        "team-id": "$APPLE_TEAM_ID"
-      }
-    }
+    "createUpdaterArtifacts": true
   },
   "plugins": {
     "updater": {
