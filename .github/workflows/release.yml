@@ -46,7 +46,6 @@ jobs:
         with:
           toolchain: stable
           cache: true
-          path: ./iwa-launcher/src-tauri
 
       - name: install Linux dependencies
         if: matrix.os == 'ubuntu-22.04'
@@ -56,7 +55,6 @@ jobs:
 
       - name: build Tauri app for Windows, Linux
         if: matrix.os != 'macos-latest'
-        working-directory: ./iwa-launcher
         run: |
           npm ci
           npm run tauri build
@@ -66,7 +64,6 @@ jobs:
 
       - name: Install x86_64-apple-darwin for mac and build Tauri binaries
         if: matrix.os == 'macos-latest'
-        working-directory: ./iwa-launcher
         run: |
           rustup target add x86_64-apple-darwin
           npm ci
@@ -81,7 +78,6 @@ jobs:
         with:
           command: release upload ${{ env.CN_APPLICATION }} --framework tauri
           api-key: ${{ secrets.CN_API_KEY }}
-          path: ./iwa-launcher/src-tauri
 
   publish:
     needs: build
