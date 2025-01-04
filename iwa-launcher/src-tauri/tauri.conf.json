@@ -36,7 +36,7 @@
       "endpoints": [
         "https://cdn.crabnebula.app/update/ua/launcher/{{target}}-{{arch}}/{{current_version}}"
       ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJCREU0MzFBMjhEMkI1OUIKUldTYnRkSW9Ha1BldXdmN1h2Y0dIYmd6Z1dkeHNpMGdlaUlkYTR2bmV3aXJ0bEJyV2ZFT05ZR05OCg=="
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJCREU0MzFBMjhEMkI1OUIKUldTYnRkSW9Ha1BldXdmN1h2Y0dIYmd6ZWR4c2kwZ2VpSWRhNHZuZXdpcnRsQnJXZkVPTllHTk4K"
     }
   }
 }
