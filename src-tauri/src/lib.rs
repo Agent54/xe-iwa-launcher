@@ -71,6 +71,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![launch_chrome])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -104,3 +105,24 @@ async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
   Ok(())
 }
 
+
+use chrome_launcher::Launcher;
+use chrome_launcher::Options;
+
+#[tauri::command]
+fn launch_chrome() {
+    let mut options = Options::default();
+    options.starting_url = Some("https://www.userandagents.com".to_string());
+
+    let mut launcher = Launcher::new(options);
+    match launcher.launch() {
+        Ok(mut launched_chrome) => {
+            println!("Launched Chrome with PID: {}", launched_chrome.pid);
+            // let _ = launched_chrome.process.wait().map_err(|e| e.to_string()).unwrap();
+            // println!("Chrome process has exited.");
+        }
+        Err(e) => {
+            eprintln!("Error launching Chrome: {}", e);
+        }
+    }
+}

@@ -25,6 +25,7 @@ serde_json = "1"
 tauri-plugin-updater = "2.3.0"
 tauri-plugin-dialog = "2"
 tauri-plugin-process = "2"
+chrome_launcher = "0.1.1"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"
