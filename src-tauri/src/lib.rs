@@ -116,7 +116,7 @@ fn launch_chrome() {
 
     let mut launcher = Launcher::new(options);
     match launcher.launch() {
-        Ok(mut launched_chrome) => {
+        Ok(launched_chrome) => {
             println!("Launched Chrome with PID: {}", launched_chrome.pid);
             // let _ = launched_chrome.process.wait().map_err(|e| e.to_string()).unwrap();
             // println!("Chrome process has exited.");
