@@ -1,6 +1,7 @@
-import { check } from "@tauri-apps/plugin-updater";
-import { ask, message } from "@tauri-apps/plugin-dialog";
-import { relaunch } from "@tauri-apps/plugin-process";
+const check = window.__TAURI__.updater.check;
+const ask = window.__TAURI__.dialog.ask;
+const message = window.__TAURI__.dialog.message;
+const relaunch = window.__TAURI__.process.relaunch;
 
 export async function checkForAppUpdates() {
   const update = await check();
@@ -23,5 +24,7 @@ Release notes: ${update.body}
       await update.downloadAndInstall();
       await relaunch();
     }
+  } else {
+    message("No updates available");
   }
 }

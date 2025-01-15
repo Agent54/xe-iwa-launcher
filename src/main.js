@@ -1,24 +1,6 @@
-const { invoke } = window.__TAURI__.core;
+import { checkForAppUpdates } from "./updater.js";
 
-let greetInputEl;
-let greetMsgEl;
-
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
-});
-
-import { checkForAppUpdates } from "./updater";
-
-document.addEventListener("DOMContentLoaded", async () => {
+document.getElementById("check-for-updates").addEventListener("click", async () => {
+  console.log("checking for updates");
   await checkForAppUpdates();
 });

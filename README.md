@@ -1,11 +1,7 @@
-# Tauri + Vanilla
+# IWA Launcher (WIP)
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
+IWA (Isolated Web Apps) require special dev flags to enable the feature and manual process to install the IWA which is not very user friendly. In order to simplify trying out IWAs we are building a an IWA launcher app that will be reponsible for launching chrome, installing the iwa, then launching the iwa. Also the launcher will handle auto start with system boot. 
 
-## Recommended IDE Setup
+Currently this repo is WIP and we are just getting the shell of the launcher app working with updates and correct build/notarization for macos. 
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
-
-
-TAURI_SIGNING_PRIVATE_KEY=$(cat ~/.tauri/myapp.key) 
-TAURI_SIGNING_PRIVATE_KEY_PASSWORD=<.....> cargo tauri build
+Once that's working we will add chrome launcher and the steps for IWA install and launching.  
