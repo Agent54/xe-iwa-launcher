@@ -26,6 +26,8 @@ tauri-plugin-updater = "2.3.0"
 tauri-plugin-dialog = "2"
 tauri-plugin-process = "2"
 chrome_launcher = "0.1.1"
+tauri-plugin-fs = "2"
+tauri-plugin-deep-link = "2.2.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"

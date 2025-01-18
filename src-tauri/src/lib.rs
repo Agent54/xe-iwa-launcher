@@ -15,6 +15,7 @@ use tauri_plugin_updater::UpdaterExt;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
@@ -23,6 +24,7 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_fs::init())
         .setup(|app| {
             #[cfg(desktop)]
             {
@@ -65,8 +67,8 @@ pub fn run() {
                 .build(app)?;
             let handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
-              println!("checking for updates");
-              update(handle).await.unwrap();
+                println!("checking for updates");
+                update(handle).await.unwrap();
             });
             Ok(())
         })
@@ -76,35 +78,31 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-
-
-
 async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
-  if let Some(update) = app.updater()?.check().await? {
-    let mut downloaded = 0;
+    if let Some(update) = app.updater()?.check().await? {
+        let mut downloaded = 0;
 
-    // alternatively we could also call update.download() and update.install() separately
-    update
-      .download_and_install(
-        |chunk_length, content_length| {
-          downloaded += chunk_length;
-          println!("downloaded {downloaded} from {content_length:?}");
-        },
-        || {
-          println!("download finished");
-        },
-      )
-      .await?;
+        // alternatively we could also call update.download() and update.install() separately
+        update
+            .download_and_install(
+                |chunk_length, content_length| {
+                    downloaded += chunk_length;
+                    println!("downloaded {downloaded} from {content_length:?}");
+                },
+                || {
+                    println!("download finished");
+                },
+            )
+            .await?;
 
-    println!("update installed");
-    app.restart();
-  } else {
-    println!("no updates available");
-  }
+        println!("update installed");
+        app.restart();
+    } else {
+        println!("no updates available");
+    }
 
-  Ok(())
+    Ok(())
 }
-
 
 use chrome_launcher::Launcher;
 use chrome_launcher::Options;
@@ -113,7 +111,7 @@ use chrome_launcher::Options;
 fn launch_chrome() {
     let mut options = Options::default();
     options.starting_url = Some("https://www.userandagents.com".to_string());
-
+    options.chrome_flags = Some(vec!["--start-fullscreen".to_string()]);
     let mut launcher = Launcher::new(options);
     match launcher.launch() {
         Ok(launched_chrome) => {
@@ -126,3 +124,13 @@ fn launch_chrome() {
         }
     }
 }
+
+// Snippet from chrome launcher npm package of flags to install isolated web app
+
+// chromeFlags: [
+//     '--remote-debugging-port=9222',  // Enable DevTools protocol
+//     '--no-first-run',               // Skip first run wizards
+//     '--no-default-browser-check',   // Skip default browser check
+//     '--enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless',  // Enable IWA features
+//     '--install-isolated-web-app-from-url=http://localhost:5193'
+//   ]
