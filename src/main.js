@@ -14,3 +14,22 @@ document.getElementById("launch-chrome").addEventListener("click", async () => {
   const invoke = window.__TAURI__.core.invoke;
   invoke('launch_chrome');
 });
+
+document.getElementById("kill-chrome").addEventListener("click", async () => {
+  console.log("killing chrome");
+  const invoke = window.__TAURI__.core.invoke;
+  invoke('kill_chrome');
+});
+
+
+document.getElementById("launch-iwa").addEventListener("click", async () => {
+  console.log("launching iwa");
+  const invoke = window.__TAURI__.core.invoke;
+  invoke('launch_iwa');
+});
+
+document.getElementById("kill-iwa").addEventListener("click", async () => {
+  console.log("killing iwa");
+  const invoke = window.__TAURI__.core.invoke;
+  invoke('kill_iwa');
+});

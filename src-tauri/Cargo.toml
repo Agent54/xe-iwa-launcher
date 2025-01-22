@@ -28,8 +28,15 @@ tauri-plugin-process = "2"
 chrome_launcher = "0.1.1"
 tauri-plugin-fs = "2"
 tauri-plugin-deep-link = "2.2.0"
+tauri-plugin-shell = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"
 tauri-plugin-updater = "2"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.48", features = ["Win32_Foundation", "Win32_System_Threading"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
 

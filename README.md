@@ -5,3 +5,4 @@ IWA (Isolated Web Apps) require special dev flags to enable the feature and manu
 Currently this repo is WIP and we are just getting the shell of the launcher app working with updates and correct build/notarization for macos. 
 
 Once that's working we will add chrome launcher and the steps for IWA install and launching.  
+
