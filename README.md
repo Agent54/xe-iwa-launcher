@@ -8,6 +8,8 @@ IWA Launcher is a desktop application designed to simplify the experience of run
 - ✅ Automatic updates via CrabNebula CDN
 - ✅ Basic Chrome launching capabilities
 - ✅ Dedicated Chrome profile management for IWAs
+- ✅ Bun sidecar bundled 
+- ✅ Git support (for cloning repos)
 - WIP - Support for `.swbn` and `.wbn` file associations
 - WIP - Cross-platform support (macOS, Windows, Linux) - currently only macOS
 
