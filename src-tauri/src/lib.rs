@@ -110,7 +110,15 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet, launch_chrome, kill_chrome, launch_iwa])
+        .invoke_handler(tauri::generate_handler![
+            greet, 
+            launch_chrome, 
+            kill_chrome, 
+            launch_iwa,
+            check_bun_version,
+            clone_repository,
+            run_bun_install,
+            run_bun_dev])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -235,6 +243,156 @@ fn launch_iwa(_state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -
     });
     Ok(())
 }
+
+use tauri_plugin_shell::process::CommandEvent;
+use git2::Repository;
+use std::path::Path;
+use std::sync::Arc;
+
+#[tauri::command]
+fn check_bun_version(app: tauri::AppHandle) -> String {
+    let sidecar_command = app.shell().sidecar("bun").unwrap().arg("--version");
+    let output = tauri::async_runtime::block_on(async move {
+        sidecar_command
+            .output()
+            .await
+            .unwrap()
+    });
+    if output.status.success() {
+        return format!("Result: {:?}", String::from_utf8(output.stdout));
+    } else {
+        return format!("Exit with code: {}", output.status.code().unwrap());
+    }
+}
+
+#[tauri::command]
+fn clone_repository(url: &str, path: &str) -> Result<String, String> {
+    // Convert the path string to a Path
+    let repo_path = Path::new(path);
+    
+    println!("Attempting to clone repository:");
+    println!("  URL: {}", url);
+    println!("  Destination: {}", repo_path.display());
+    
+    // Attempt to clone the repository
+    match Repository::clone(url, repo_path) {
+        Ok(repo) => {
+            // Get the path of the cloned repository
+            let workdir = repo.workdir()
+                .ok_or_else(|| String::from("Could not get repository working directory"))?;
+            
+            println!("Repository cloned successfully:");
+            println!("  Working directory: {}", workdir.display());
+            println!("  Is bare: {}", repo.is_bare());
+            println!("  Is empty: {}", repo.is_empty().unwrap_or(false));
+            
+            Ok(format!("Successfully cloned repository to {} (Working directory: {})", 
+                      path, workdir.display()))
+        },
+        Err(e) => {
+            println!("Failed to clone repository:");
+            println!("  Error: {}", e);
+            Err(format!("Failed to clone repository: {}", e))
+        }
+    }
+}
+
+#[tauri::command]
+async fn run_bun_install(app: tauri::AppHandle, project_path: &str) -> Result<String, String> {
+    println!("Starting bun install in directory: {}", project_path);
+    
+    let sidecar_command = app.shell().sidecar("bun")
+        .map_err(|e| {
+            println!("Failed to create sidecar command: {}", e);
+            e.to_string()
+        })?
+        .current_dir(project_path)
+        .arg("install");
+
+    println!("Executing command: bun install");
+    let output = sidecar_command
+        .output()
+        .await
+        .map_err(|e| {
+            println!("Command execution failed: {}", e);
+            e.to_string()
+        })?;
+
+    if output.status.success() {
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        println!("bun install completed successfully:\n{}", stdout);
+        Ok(stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+        println!("bun install failed:\n{}", stderr);
+        Err(format!("Failed to run bun install: {}", stderr))
+    }
+}
+
+#[tauri::command]
+async fn run_bun_dev(app: tauri::AppHandle, project_path: &str) -> Result<String, String> {
+    println!("Starting bun dev in directory: {}", project_path);
+    
+    let sidecar_command = app.shell().sidecar("bun")
+        .map_err(|e| {
+            println!("Failed to create sidecar command: {}", e);
+            e.to_string()
+        })?
+        .current_dir(project_path)
+        .arg("dev");
+
+    let (mut rx, mut _child) = sidecar_command
+        .spawn()
+        .map_err(|e| {
+            println!("Failed to spawn bun dev: {}", e);
+            e.to_string()
+        })?;
+
+    let output = Arc::new(Mutex::new(String::new()));
+    let output_clone = output.clone();
+
+    tauri::async_runtime::spawn(async move {
+        while let Some(event) = rx.recv().await {
+            match event {
+                CommandEvent::Stdout(line) => {
+                    let line_str = String::from_utf8_lossy(&line);
+                    println!("[stdout] {}", line_str);
+                    let mut output = output_clone.lock().unwrap();
+                    output.push_str(&format!("[stdout] {}\n", line_str));
+                }
+                CommandEvent::Stderr(line) => {
+                    let line_str = String::from_utf8_lossy(&line);
+                    println!("[stderr] {}", line_str);
+                    let mut output = output_clone.lock().unwrap();
+                    output.push_str(&format!("[stderr] {}\n", line_str));
+                }
+                _ => {}
+            }
+        }
+    });
+
+    println!("bun dev process started");
+    let initial_output = "starting bun dev".to_string();
+    Ok(initial_output)
+}
+
+// #[cfg_attr(mobile, tauri::mobile_entry_point)]
+// pub fn run() {
+//     tauri::Builder::default()
+//         .plugin(tauri_plugin_shell::init())
+//         .plugin(tauri_plugin_opener::init())
+//         .invoke_handler(tauri::generate_handler![
+//             greet, 
+//             check_bun_version,
+//             clone_repository,
+//             run_bun_install,
+//             run_bun_dev
+//         ])
+//         .run(tauri::generate_context!())
+//         .expect("error while running tauri application");
+// }
+
+
 
 // #[tauri::command]
 // fn kill_iwa(state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -> Result<(), String> {

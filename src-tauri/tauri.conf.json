@@ -1,10 +1,13 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "iwa-launcher",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "identifier": "com.iwa-launcher.app",
   "build": {
-    "frontendDist": "../src"
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": true,
@@ -40,6 +43,9 @@
         "role": "Viewer",
         "mimeType": "application/webbundle"
       }
+    ],
+    "externalBin": [
+      "binaries/bun"
     ]
   },
   "plugins": {
