@@ -229,7 +229,7 @@ fn launch_iwa(_state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -
     let handle = app_handle.clone();
     tauri::async_runtime::spawn(async move {
         let (rx, child) = handle.shell().command("/Users/luke/Applications/Chrome Apps.localized/U&A IWA Test.app/Contents/MacOS/app_mode_loader")
-            .args(["--enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless"])
+            .args(["--enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless"]) //EnableImmersiveFullscreenToolbar
             .spawn()
             .unwrap();
     });
@@ -242,11 +242,6 @@ fn launch_iwa(_state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -
 //     let output = shell.command("kill").output().await.unwrap();
 //     Ok(())
 // }
-
-
-
-
-
 
 // use tauri_plugin_shell::ShellExt;
 // fn kill_process(pid: u32) -> Result<(), String> {
