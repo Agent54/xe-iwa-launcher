@@ -2,6 +2,11 @@
 [x] updates working via crab nebula 
 [x] launch chrome (basic)
 [x] use specific chrome profile for IWA launcher under app data
+[x] bun sidecar
+[x] git checkout via git2
+[x] run bun install / bun dev 
+[x] able to get wrangler / workerd running
+[x] able to run partyvite-example
 [ ] include iwa test file  
 [ ] install isolated web app from file
 [ ] install isolated web app from url (dev mode)
