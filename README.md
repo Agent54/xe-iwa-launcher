@@ -55,7 +55,7 @@ This project is currently in active development. While core features like auto-s
 
 Contributions are welcome! Check the TODO list in the repository for areas where help is needed.
 
-To get involved checkour https://userandagents.com and join the discord
+To get involved checkout https://userandagents.com and join our [Discord](https://discord.gg/mtEwuEZQ5x).
 
 ## License
 
