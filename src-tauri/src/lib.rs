@@ -112,7 +112,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             greet, 
-            launch_chrome, 
+            launch_chrome,
+            launch_chrome_async,
             kill_chrome, 
             launch_iwa,
             check_bun_version,
@@ -163,11 +164,13 @@ fn launch_chrome(state: tauri::State<ChromeState>, app_handle: tauri::AppHandle)
     // Convert PathBuf to string for the chrome flag
     let user_data_dir = state.data_dir.to_string_lossy().to_string();
 
+    options.ignore_default_flags = Some(true);
     options.chrome_flags = Some(vec![
         // "--start-fullscreen".to_string(),
         format!("--user-data-dir={}", user_data_dir),
         "--no-first-run".to_string(),
         "--no-default-browser-check".to_string(),
+        "--remote-debugging-port=9222".to_string(),
         "--enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless".to_string(),
         "--install-isolated-web-app-from-url=http://localhost:5193".to_string()
     ]);
@@ -235,9 +238,10 @@ fn kill_chrome(state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -
 #[tauri::command]
 fn launch_iwa(_state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -> Result<(), String> {
     let handle = app_handle.clone();
+    println!("launching iwa");
     tauri::async_runtime::spawn(async move {
         let (rx, child) = handle.shell().command("/Users/luke/Applications/Chrome Apps.localized/U&A IWA Test.app/Contents/MacOS/app_mode_loader")
-            .args(["--enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless"]) //EnableImmersiveFullscreenToolbar
+            .args(["--remote-debugging-port=9222 --enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless"]) //EnableImmersiveFullscreenToolbar
             .spawn()
             .unwrap();
     });
@@ -374,6 +378,30 @@ async fn run_bun_dev(app: tauri::AppHandle, project_path: &str) -> Result<String
     println!("bun dev process started");
     let initial_output = "starting bun dev".to_string();
     Ok(initial_output)
+}
+
+#[tauri::command]
+fn launch_chrome_async(state: tauri::State<ChromeState>, app_handle: tauri::AppHandle) -> Result<(), String> {
+    let handle = app_handle.clone();
+    let data_dir = state.data_dir.clone();
+    println!("launching chrome async");
+    tauri::async_runtime::spawn(async move {
+        let (rx, child) = handle.shell().command("google-chrome")
+            .args([
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--enable-features=IsolatedWebApps,IsolatedWebAppDevMode,ControlledFrame,AutomaticFullscreenContentSetting,WebAppBorderless",
+                "--install-isolated-web-app-from-url=http://localhost:5193"
+            ])
+            .spawn()
+            .unwrap();
+        
+        // // Store the PID in state if needed
+        // if let Some(pid) = child.pid() {
+        //     println!("Launched Chrome with PID: {}", pid);
+        // }
+    });
+    Ok(())
 }
 
 // #[cfg_attr(mobile, tauri::mobile_entry_point)]
